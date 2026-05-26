@@ -1,0 +1,18 @@
+services:
+  tts:
+    build: .
+    ports:
+      - "5002:5002"
+    environment:
+      - COQUI_TOS_AGREED=1   # bypasses the interactive TOS prompt at model download
+    volumes:
+      - ./models:/root/.local/share/tts   # model cache — downloaded once, reused
+      - ./voices:/voices                   # drop voice WAV files here
+      - ./output:/output                   # generated audio lands here
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

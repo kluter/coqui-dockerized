@@ -52,7 +52,7 @@ The base image requires the following to actually work. None of which are includ
 
 ## Requirements
 
-- Docker Desktop with WSL2 backend
+- Docker (Docker Desktop on Windows/macOS, Docker Engine on Linux)
 - NVIDIA GPU with drivers installed
 - Docker GPU passthrough working (`docker run --gpus all nvidia/cuda:... nvidia-smi` should succeed)
 

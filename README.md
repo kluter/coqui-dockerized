@@ -80,6 +80,8 @@ The model clones timbre well. Pronunciation quality depends heavily on how clean
 ffmpeg -i your_recording.opus -ar 22050 -ac 1 voices/speaker.wav
 ```
 
+<p align="center"><img src="assets/voice_normalized.png" alt="Normalized voice waveform" width="600"></p>
+
 **3. Build and run**
 
 ```bash

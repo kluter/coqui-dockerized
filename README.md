@@ -2,59 +2,7 @@
 <p align="center"><img src="assets/coqui_logo.png" alt="Coqui TTS" width="450"></p>
 
 A fully working, GPU-accelerated Docker setup for voice cloning using [Coqui TTS](https://github.com/idiap/coqui-ai-TTS).
-Drop in a voice sample, run one command, start cloning.
-
----
-
-## Why This Exists
-
-The official Coqui TTS image (`ghcr.io/idiap/coqui-tts`) is intentionally minimal. From version `0.27.4`, PyTorch is not included by default - users are expected to install the variant that matches their hardware (CUDA, CPU, ROCm). This is a reasonable design decision, but it means the base image alone will not run.
-
-Several other dependencies are also missing. This project patches all of that so the path from zero to a working voice clone is a single `docker compose up`.
-
----
-
-## Built On
-
-This image extends the official Coqui TTS image. All credit for the underlying TTS engine, models, and architecture goes to the Idiap Research Institute and the Coqui community:
-
-**[idiap/coqui-ai-TTS](https://github.com/idiap/coqui-ai-TTS)**
-
----
-
-## Structure
-
-```
-coqui-dockerized/
-├── Dockerfile          # extends the base image with PyTorch + FFmpeg
-├── compose.yaml        # GPU passthrough, volumes, and server config
-├── .gitignore
-├── README.md
-├── models/             # XTTS v2 model cache - gitignored, ~1.8GB on first run
-├── voices/             # place voice WAV samples here - gitignored
-└── output/             # generated audio lands here - gitignored
-```
-
----
-
-## What This Repo Adds
-
-The base image requires the following to actually work. None of which are included out of the box:
-
-| What | Why |
-|---|---|
-| `torch`, `torchaudio`, `torchcodec` (cu128) | PyTorch intentionally excluded from base image since v0.27.4 |
-| `ffmpeg` | Required by torchcodec for audio decoding, not installed in base image |
-| `COQUI_TOS_AGREED=1` | XTTS v2 prompts for license agreement interactively, breaks headless containers |
-| `--device cuda` | `--use_cuda` flag is deprecated, replaced with `--device cuda` |
-
----
-
-## Requirements
-
-- Docker (Docker Desktop on Windows/macOS, Docker Engine on Linux)
-- NVIDIA GPU with drivers installed
-- Docker GPU passthrough working (`docker run --gpus all nvidia/cuda:... nvidia-smi` should succeed)
+Drop in a voice sample, run one command, start cloning. Requires Docker and an NVIDIA GPU.
 
 ---
 
@@ -101,6 +49,50 @@ Navigate to `http://localhost:5002`
 - Leave the **Speaker** dropdown alone - it has no effect when a reference audio is provided
 
 Generated audio plays in the browser and can be saved with right-click or via the API.
+
+---
+
+## Why This Exists
+
+The official Coqui TTS image (`ghcr.io/idiap/coqui-tts`) is intentionally minimal. From version `0.27.4`, PyTorch is not included by default - users are expected to install the variant that matches their hardware (CUDA, CPU, ROCm). This is a reasonable design decision, but it means the base image alone will not run.
+
+Several other dependencies are also missing. This project patches all of that so the path from zero to a working voice clone is a single `docker compose up`.
+
+---
+
+## Built On
+
+This image extends the official Coqui TTS image. All credit for the underlying TTS engine, models, and architecture goes to the Idiap Research Institute and the Coqui community:
+
+**[idiap/coqui-ai-TTS](https://github.com/idiap/coqui-ai-TTS)**
+
+---
+
+## Structure
+
+```
+coqui-dockerized/
+├── Dockerfile          # extends the base image with PyTorch + FFmpeg
+├── compose.yaml        # GPU passthrough, volumes, and server config
+├── .gitignore
+├── README.md
+├── models/             # XTTS v2 model cache - gitignored, ~1.8GB on first run
+├── voices/             # place voice WAV samples here - gitignored
+└── output/             # generated audio lands here - gitignored
+```
+
+---
+
+## What This Repo Adds
+
+The base image requires the following to actually work. None of which are included out of the box:
+
+| What | Why |
+|---|---|
+| `torch`, `torchaudio`, `torchcodec (cu128)` | PyTorch intentionally excluded from base image since v0.27.4 |
+| `ffmpeg` | Required by torchcodec for audio decoding, not installed in base image |
+| `COQUI_TOS_AGREED=1` | XTTS v2 prompts for license agreement interactively, breaks headless containers |
+| `--device cuda` | `--use_cuda` flag is deprecated, replaced with `--device cuda` |
 
 ---
 

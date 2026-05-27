@@ -1,16 +1,16 @@
 # coqui-dockerized
+![Coqui TTS](assets/coqui_logo.png)
 
 A fully working, GPU-accelerated Docker setup for voice cloning using [Coqui TTS](https://github.com/idiap/coqui-ai-TTS).
-
 Drop in a voice sample, run one command, start cloning.
 
 ---
 
 ## Why This Exists
 
-The official Coqui TTS image (`ghcr.io/idiap/coqui-tts`) is intentionally minimal. Starting from version `0.27.4`, PyTorch is no longer bundled - users are expected to install the variant that matches their hardware (CUDA, CPU, ROCm). This is a reasonable design decision, but it means the base image alone won't run.
+The official Coqui TTS image (`ghcr.io/idiap/coqui-tts`) is intentionally minimal. From version `0.27.4`, PyTorch is not included by default - users are expected to install the variant that matches their hardware (CUDA, CPU, ROCm). This is a reasonable design decision, but it means the base image alone will not run.
 
-Several other dependencies are also missing from the base image. This project patches all of that and wires everything together so the path from zero to a working voice clone is a single `docker compose up`.
+Several other dependencies are also missing. This project patches all of that so the path from zero to a working voice clone is a single `docker compose up`.
 
 ---
 
@@ -27,7 +27,7 @@ This image extends the official Coqui TTS image. All credit for the underlying T
 ```
 coqui-dockerized/
 ├── Dockerfile          # extends the base image with PyTorch + FFmpeg
-├── compose.yaml        # wires GPU passthrough, volumes, and server config
+├── compose.yaml        # GPU passthrough, volumes, and server config
 ├── .gitignore
 ├── README.md
 ├── models/             # XTTS v2 model cache - gitignored, ~1.8GB on first run
@@ -70,9 +70,11 @@ cd coqui-dockerized
 **2. Add a voice sample**
 
 Drop a `.wav` file into the `voices/` folder. For best results:
-- 15–20 seconds of clean speech
-- Single speaker, no background noise
+- 6-30 seconds of clean speech (longer does not improve quality)
+- Single speaker, no background noise, no music
 - 22050 Hz mono
+
+The model clones timbre well. Pronunciation quality depends heavily on how clean and consistent the reference clip is. A noisy or heavily compressed recording will produce audible artifacts in the output.
 
 ```bash
 ffmpeg -i your_recording.opus -ar 22050 -ac 1 voices/speaker.wav
@@ -94,29 +96,20 @@ Navigate to `http://localhost:5002`
 - Set **Reference audio** to `/voices/your_file.wav`
 - Choose a language
 - Type your text and hit **Speak**
+- Leave the **Speaker** dropdown alone - it has no effect when a reference audio is provided
 
-Generated audio plays in the browser. Output saving is not yet automatic - see Roadmap.
+Generated audio plays in the browser and can be saved with right-click or via the API.
 
 ---
 
 ## Model
 
 **XTTS v2** - a zero-shot multilingual voice cloning model. No training required. A short audio clip is enough to clone a voice on the fly.
-
 Supports 17 languages including English, German, French, Spanish, Polish, and more.
-
----
-
-## Potential Roadmap
-
-- [ ] Automatic voice pre-loading on startup from `voices/` folder
-- [ ] CPU-only variant for machines without NVIDIA GPU
-- [ ] Audio sample preprocessing guide
-- [ ] Auto-save generated audio to `output/` folder
-- [ ] `compose.yaml` PR contribution to upstream repo
 
 ---
 
 ## License
 
-This project is a Docker wrapper. The underlying Coqui TTS engine is licensed under [CPML (Coqui Public Model License)](https://coqui.ai/cpml). Non-commercial use only unless you hold a commercial license from Coqui.
+This project is a Docker wrapper. The underlying Coqui TTS engine is licensed under [CPML (Coqui Public Model License)](https://coqui.ai/cpml).
+Non-commercial use only unless you hold a commercial license from Coqui.

@@ -1,7 +1,7 @@
 # coqui-dockerized
 <p align="center"><img src="assets/coqui_logo.png" alt="Coqui TTS" width="450"></p>
 
-Always wanted to try voice cloning. The base image wouldn't run, so the missing pieces got tracked down one by one - the result turned out useful enough to share.
+Always wanted to try voice cloning. The base image wouldn't run, so I tracked down the missing pieces one by one. The result turned out useful enough to share.
 
 A fully working, GPU-accelerated Docker setup for voice cloning using [Coqui TTS](https://github.com/idiap/coqui-ai-TTS).
 Drop in a voice sample, run one command, start cloning. Requires Docker and an NVIDIA GPU.
